@@ -1,19 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameSet : MonoBehaviour
 {
-    void Start()
-    {
-    }
-    
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R))        //R키를 누르면 Game 씬 시작
             SceneManager.LoadScene("Game");
     }
 }
