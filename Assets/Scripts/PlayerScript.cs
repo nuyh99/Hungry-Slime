@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using Color = UnityEngine.Color;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -15,7 +17,7 @@ public class PlayerScript : MonoBehaviour
     public MeterScript boostMeter;
     public float currentBoost;
     public float maxBoost = 80f;
-
+    public static double Score_count=0;
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -25,11 +27,9 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log(moveSpeed);
-
         if (transform.localScale.x * 1.1f > col.transform.localScale.x)
         {
-            transform.localScale += col.transform.localScale * 0.2f;
+            transform.localScale += col.transform.localScale * 0.15f;
             if (moveSpeed > 2f)
                 moveSpeed -= col.transform.localScale.x * 3;
         }
@@ -40,6 +40,7 @@ public class PlayerScript : MonoBehaviour
                 moveSpeed += col.transform.localScale.x * 3;
         }
 
+        Score_count+= col.transform.localScale.x * 100;
         GameDirector.Count--;
         Destroy(col.GameObject());
     }
@@ -70,24 +71,30 @@ public class PlayerScript : MonoBehaviour
             isBoost = false;
         }
 
-            float x = Input.GetAxis("Horizontal");
+        float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
         _moveDirection = new Vector3(x, y, 0);
         
         boostMeter.SetBoost(currentBoost);
         if (isBoost&&currentBoost>0f)
         {
+            _spriteRenderer.color=Color.red;
             transform.position += _moveDirection * (moveSpeed * Time.deltaTime) * 2f;
+            Score_count += 10 * Time.deltaTime;
             currentBoost -= 60 * Time.deltaTime;
         }
         else
         {
+            _spriteRenderer.color = Color.white;
             transform.position += _moveDirection * (moveSpeed * Time.deltaTime);
             if(currentBoost<=80)
                 currentBoost += 20 * Time.deltaTime;
         }
 
         if (transform.localScale.x < 0.2f)
-            Destroy(gameObject);
+            SceneManager.LoadScene("Over");
+
+        if (transform.localScale.x > 3f)
+            SceneManager.LoadScene("Clear");
     }
 }
