@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public class FishScript : MonoBehaviour
 {
-    private bool right;
-    private float speed;
-    private Vector3 pos;
+    private bool _isRight;
+    private float _speed;
+    private Vector3 _pos;
 
     private Vector3 getRandomPosition()
     {
@@ -18,31 +18,31 @@ public class FishScript : MonoBehaviour
 
     private float getRandomSize()
     {
-        return Random.Range(0f, 1f);
+        return Random.Range(0f, 0.8f);
     }
+
     void Start()
     {
         GetComponent<Transform>().position = getRandomPosition();
-        pos = GetComponent<Transform>().position;
-        
+        _pos = GetComponent<Transform>().position;
+
         if (transform.position.x < 0)
             GetComponent<SpriteRenderer>().flipX = true;
-        transform.localScale =Vector3.one*getRandomSize();
-        
-        if (GetComponent<SpriteRenderer>().flipX == true)
-            speed = Random.Range(1f, 9f);
-        else
-            speed = Random.Range(-1f, -9f);
+
+        Vector3 size = Vector3.one * getRandomSize();
+        transform.localScale = size;
+
+        _speed = GetComponent<SpriteRenderer>().flipX ? Random.Range(1f, 9f) : Random.Range(-1f, -9f);
     }
 
     void Update()
     {
-        pos.x += speed * Time.deltaTime;
-        transform.position = pos;
+        _pos.x += _speed * Time.deltaTime;
+        transform.position = _pos;
 
         if (transform.position.x > 12 || transform.position.x < -12)
         {
-            GameDirector.count--;
+            GameDirector.Count--;
             Destroy(gameObject);
         }
     }
